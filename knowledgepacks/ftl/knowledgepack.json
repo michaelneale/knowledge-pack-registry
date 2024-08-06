@@ -1,0 +1,6 @@
+{
+    "files" : ["ftl-project.toml"],
+    "description": "FTL",
+    "instruction": "Take a look at the readme for how to run and test this project.",
+    "documentation": "https://tbd54566975.github.io/ftl/"
+}

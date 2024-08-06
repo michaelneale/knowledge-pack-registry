@@ -1,0 +1,5 @@
+{
+    "files" : ["Justfile"],
+    "description": "justfile",
+    "instruction": "Please look at the Justfile contents for how to built it. There may often be a test target it it or similar that can be run with 'just test'."
+}

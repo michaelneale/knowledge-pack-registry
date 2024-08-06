@@ -1,0 +1,19 @@
+Glossary
+Glossary of terms and definitions in FTL.
+
+Verb
+A Verb is a remotely callable function that takes an input and returns an output.
+
+func(context.Context, In) (Out, error)
+Sink
+A Sink is a function that takes an input and returns nothing.
+
+func(context.Context, In) error
+Source
+A Source is a function that takes no input and returns an output.
+
+func(context.Context) (Out, error)
+Empty
+An Empty function is one that takes neither input or output.
+
+func(context.Context) error

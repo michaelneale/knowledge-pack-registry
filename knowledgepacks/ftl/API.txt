@@ -1,0 +1,97 @@
+Verbs
+Defining Verbs
+To declare a Verb, write a normal Go function with the following signature, annotated with the Go comment directive //ftl:verb:
+
+//ftl:verb
+func F(context.Context, In) (Out, error) { }
+eg.
+
+type EchoRequest struct {}
+
+type EchoResponse struct {}
+
+//ftl:verb
+func Echo(ctx context.Context, in EchoRequest) (EchoResponse, error) {
+  // ...
+}
+By default verbs are only visible to other verbs in the same module.
+
+Calling Verbs
+To call a verb use ftl.Call(). eg.
+
+out, err := ftl.Call(ctx, echo.Echo, echo.EchoRequest{})
+
+
+PubSub
+FTL has first-class support for PubSub, modelled on the concepts of topics (where events are sent), subscriptions (a cursor over the topic), and subscribers (functions events are delivered to). Subscribers are, as you would expect, sinks. Each subscription is a cursor over the topic it is associated with. Each topic may have multiple subscriptions. Each subscription may have multiple subscribers, in which case events will be distributed among them.
+
+First, declare a new topic:
+
+var Invoices = ftl.Topic[Invoice]("invoices")
+Then declare each subscription on the topic:
+
+var _ = ftl.Subscription(Invoices, "emailInvoices")
+And finally define a Sink to consume from the subscription:
+
+//ftl:subscribe emailInvoices
+func SendInvoiceEmail(ctx context.Context, in Invoice) error {
+  // ...
+}
+Events can be published to a topic like so:
+
+Invoices.Publish(ctx, Invoice{...})
+NOTE! PubSub topics cannot be published to from outside the module that declared them, they can only be subscribed to. That is, if a topic is declared in module A, module B cannot publish to it.
+
+
+Types
+FTL supports the following types: Int (64-bit), Float (64-bit), String, Bytes (a byte array), Bool, Time, Any (a dynamic type), Unit (similar to "void"), arrays, maps, data structures, and constant enumerations. Each FTL type is mapped to a corresponding language-specific type. For example in Go Float is represented as float64, Time is represented by time.Time, and so on. [^1]
+
+Any Go type supported by FTL and referenced by an FTL declaration will be automatically exposed to an FTL type.
+
+For example, the following verb declaration will result in Request and Response being automatically translated to FTL types.
+
+type Request struct {}
+type Response struct {}
+
+//ftl:verb
+func Hello(ctx context.Context, in Request) (Response, error) {
+  // ...
+}
+Type enums (sum types)
+Sum types are supported by FTL's type system, but aren't directly supported by Go. However they can be approximated with the use of sealed interfaces. To declare a sum type in FTL use the comment directive //ftl:enum:
+
+//ftl:enum
+type Animal interface { animal() }
+
+type Cat struct {}
+func (Cat) animal() {}
+
+type Dog struct {}
+func (Dog) animal() {}
+Value enums
+A value enum is an enumerated set of string or integer values.
+
+//ftl:enum
+type Colour string
+
+const (
+  Red   Colour = "red"
+  Green Colour = "green"
+  Blue  Colour = "blue"
+)
+Type aliases
+A type alias is an alternate name for an existing type. It can be declared like so:
+
+//ftl:typealias
+type Alias Target
+or
+
+//ftl:typealias
+type Alias = Target
+eg.
+
+//ftl:typealias
+type UserID string
+
+//ftl:typealias
+type UserToken = string

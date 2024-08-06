@@ -1,0 +1,5 @@
+{
+    "files" : ["pyproject.toml", "poetry.lock"],
+    "description": "poetry python",
+    "instruction": "This is a python project built with poetry. The README may have instructions on how best to have a test loop."
+}

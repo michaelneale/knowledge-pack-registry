@@ -1,0 +1,5 @@
+{
+    "files" : ["package.json", "package-lock.json"],
+    "description": "npm",
+    "instruction": "Please look in the package.json for scripts to run to test this repo or take other actions as needed."
+}
